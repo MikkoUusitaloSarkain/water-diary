@@ -3,85 +3,160 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Water Diary — Supabase Auth</title>
+  <title>Water Diary</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root { --bg:#f4f8fb; --card:#fff; --text:#102033; --muted:#65758b; --line:#dbe6ef; --primary:#0ea5e9; --primary-dark:#0284c7; --danger:#ef4444; --ok:#10b981; --warn:#f59e0b; --shadow:0 16px 40px rgba(15,23,42,.08); --radius:22px; }
-    *{box-sizing:border-box} body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#e0f2fe,var(--bg) 46%);color:var(--text);min-height:100vh}.wrap{max-width:980px;margin:0 auto;padding:28px 16px 52px}header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}h1{margin:0 0 6px;font-size:clamp(28px,5vw,46px);letter-spacing:-.04em}h2{margin-top:0}p{color:var(--muted);line-height:1.5}.card{background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border:1px solid rgba(219,230,239,.9);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}.grid{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:820px){.grid{grid-template-columns:1.1fr .9fr}}label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 13px;font:inherit;color:var(--text);outline:none}input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(14,165,233,.12)}.row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}@media(max-width:560px){.row{grid-template-columns:1fr}}button{border:0;border-radius:999px;padding:12px 16px;font-weight:750;cursor:pointer;color:#fff;background:var(--primary);box-shadow:0 10px 24px rgba(14,165,233,.25)}button:hover{background:var(--primary-dark)}button.secondary{background:#e8f3fb;color:var(--primary-dark);box-shadow:none}button.danger{background:#fee2e2;color:var(--danger);box-shadow:none}button:disabled{opacity:.55;cursor:not-allowed}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.status{font-size:13px;color:var(--muted);margin-left:auto}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;background:#f1f5f9;color:#475569;border-radius:999px;font-weight:700;font-size:13px}.hidden{display:none!important}.bigNumber{font-size:clamp(46px,10vw,82px);line-height:.9;letter-spacing:-.07em;margin:12px 0 4px}.progress{height:16px;border-radius:999px;background:#e5eef7;overflow:hidden;margin:18px 0 8px}.bar{height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#0ea5e9);transition:width .25s}.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px}.quick button{padding:13px 8px}.entry{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.entry:last-child{border-bottom:0}.amount{font-weight:850;font-size:18px}.meta{color:var(--muted);font-size:13px;margin-top:2px}.setup{margin-bottom:16px}.hint{font-size:13px;color:var(--muted);margin-top:8px}.sql{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;padding:14px;border-radius:16px;overflow:auto;font-size:13px}.ok{color:var(--ok)}.topActions{display:flex;gap:10px;align-items:center}.settingsPanel{margin-bottom:16px}.smallBtn{padding:9px 12px;font-size:13px;box-shadow:none;background:#e8f3fb;color:var(--primary-dark)}
+    :root{--bg:#f4f8fb;--card:#fff;--text:#102033;--muted:#65758b;--line:#dbe6ef;--primary:#0ea5e9;--primary-dark:#0284c7;--danger:#ef4444;--ok:#10b981;--warn:#f59e0b;--shadow:0 16px 40px rgba(15,23,42,.08);--radius:22px}*{box-sizing:border-box}body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#e0f2fe,var(--bg) 46%);color:var(--text);min-height:100vh}.wrap{max-width:980px;margin:0 auto;padding:28px 16px 52px}header{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}h1{margin:0 0 6px;font-size:clamp(28px,5vw,46px);letter-spacing:-.04em}h2{margin-top:0}p{color:var(--muted);line-height:1.5}.card{background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border:1px solid rgba(219,230,239,.9);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}.grid{display:grid;grid-template-columns:1fr;gap:16px}@media(min-width:820px){.grid{grid-template-columns:1.1fr .9fr}}label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 13px;font:inherit;color:var(--text);outline:none}input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(14,165,233,.12)}.row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}@media(max-width:640px){.row{grid-template-columns:1fr}}button{border:0;border-radius:999px;padding:12px 16px;font-weight:750;cursor:pointer;color:#fff;background:var(--primary);box-shadow:0 10px 24px rgba(14,165,233,.25)}button:hover{background:var(--primary-dark)}button.secondary{background:#e8f3fb;color:var(--primary-dark);box-shadow:none}button.ghost{background:transparent;color:var(--muted);box-shadow:none;padding:8px 10px}button.danger{background:#fee2e2;color:var(--danger);box-shadow:none}button.warn{background:#fef3c7;color:#b45309;box-shadow:none}button:disabled{opacity:.55;cursor:not-allowed}.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.status{font-size:13px;color:var(--muted);margin-left:auto}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;background:#ecfeff;color:#0369a1;border-radius:999px;font-weight:700;font-size:13px}.hidden{display:none!important}.bigNumber{font-size:clamp(46px,10vw,82px);line-height:.9;letter-spacing:-.07em;margin:12px 0 4px}.progress{height:16px;border-radius:999px;background:#e5eef7;overflow:hidden;margin:18px 0 8px}.bar{height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#0ea5e9);transition:width .25s}.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px}.quick button{padding:13px 8px}.entry{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.entry:last-child{border-bottom:0}.amount{font-weight:850;font-size:18px}.meta{color:var(--muted);font-size:13px;margin-top:2px}.hint{font-size:13px;color:var(--muted);margin-top:8px}code{background:#e8f3fb;padding:2px 6px;border-radius:8px}.sql{white-space:pre-wrap;background:#0f172a;color:#e2e8f0;padding:14px;border-radius:16px;overflow:auto;font-size:13px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.tab{background:#e8f3fb;color:#0369a1;box-shadow:none}.tab.active{background:var(--primary);color:#fff}.topnav{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.dangerZone{border:1px solid #fecaca;background:#fff7f7}.notice{border:1px solid #fde68a;background:#fffbeb;color:#92400e;border-radius:16px;padding:12px;margin:12px 0}.ok{color:var(--ok)}.error{color:var(--danger)}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header><div><h1>Water Diary</h1><p>Private cloud-synced hydration diary.</p></div><div class="topActions"><span id="cloudState" class="pill">Connecting…</span><button id="openSettings" class="smallBtn hidden" type="button">Settings</button></div></header>
-    <section class="card setup settingsPanel hidden" id="setupCard"><h2>Admin settings</h2><p>Database settings are hidden from normal use. Use this only if you need to change the Supabase project URL or publishable key.</p><div class="row"><div><label>Supabase URL</label><input id="sbUrl" placeholder="https://xxxxx.supabase.co"></div><div><label>Anon / publishable key</label><input id="sbKey" placeholder="eyJhbGciOi..." type="password"></div></div><div class="actions" style="margin-top:12px"><button id="saveConfig">Save settings</button><button class="secondary" id="toggleSql">Show secure SQL</button><button class="secondary" id="closeSettings" type="button">Close</button><span class="status" id="configStatus"></span></div><div id="sqlBox" class="hidden" style="margin-top:14px"><p>Use this table/policy model for the secure authenticated version:</p><div class="sql">create table if not exists profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  email text,
-  role text not null default 'user' check (role in ('admin','user')),
-  created_at timestamptz not null default now()
-);
+<div class="wrap">
+  <header>
+    <div><h1>Water Diary</h1><p id="subtitle">Cloud-synced hydration diary.</p></div>
+    <div class="topnav">
+      <span id="cloudState" class="pill">Starting…</span>
+      <button id="navDiary" class="secondary hidden">Diary</button>
+      <button id="navProfile" class="secondary hidden">Profile</button>
+      <button id="navSettings" class="secondary hidden">Settings</button>
+      <button id="logoutBtn" class="ghost hidden">Logout</button>
+    </div>
+  </header>
 
-alter table profiles enable row level security;
+  <section class="card hidden" id="setupCard">
+    <h2>Admin settings</h2>
+    <p>These settings are only visible to admins. For public use, paste your Supabase URL and publishable key into the CONFIG block near the top of this HTML file.</p>
+    <div class="row">
+      <div><label>Supabase URL</label><input id="sbUrl" placeholder="https://xxxxx.supabase.co"></div>
+      <div><label>Publishable / anon key</label><input id="sbKey" placeholder="eyJhbGciOi..." type="password"></div>
+    </div>
+    <div class="actions" style="margin-top:12px"><button id="saveConfig">Save connection</button><button class="secondary" id="toggleSql">Show SQL helper</button><span class="status" id="configStatus"></span></div>
+    <div id="sqlBox" class="hidden" style="margin-top:14px">
+      <div class="sql">-- Recommended profile columns/policies
+alter table profiles add column if not exists display_name text;
+alter table profiles add column if not exists updated_at timestamptz;
 
-drop policy if exists &quot;Users can read own profile&quot; on profiles;
-create policy &quot;Users can read own profile&quot; on profiles for select using (auth.uid() = id);
+create policy if not exists "Users can update own profile"
+on profiles for update
+using (auth.uid() = id)
+with check (auth.uid() = id);
 
-drop policy if exists &quot;Users can insert own profile&quot; on profiles;
-create policy &quot;Users can insert own profile&quot; on profiles for insert with check (auth.uid() = id and role = 'user');
-
-create table if not exists water_entries (
+-- Optional deletion request table, if you want manual/admin account deletion workflow
+create table if not exists account_deletion_requests (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  entry_date date not null,
-  entry_time time not null,
-  amount_ml integer not null check (amount_ml &gt; 0),
-  drink_type text not null default 'water',
-  note text,
+  email text,
+  reason text,
+  status text not null default 'requested',
   created_at timestamptz not null default now()
 );
 
-alter table water_entries enable row level security;
+alter table account_deletion_requests enable row level security;
 
-drop policy if exists "Allow anon read" on water_entries;
-drop policy if exists "Allow anon insert" on water_entries;
-drop policy if exists "Allow anon delete" on water_entries;
-drop policy if exists "Users can read own entries" on water_entries;
-drop policy if exists "Users can insert own entries" on water_entries;
-drop policy if exists "Users can delete own entries" on water_entries;
+create policy if not exists "Users can create own deletion request"
+on account_deletion_requests for insert
+with check (auth.uid() = user_id);
 
-create policy "Users can read own entries" on water_entries for select using (auth.uid() = user_id);
-create policy "Users can insert own entries" on water_entries for insert with check (auth.uid() = user_id);
-create policy "Users can delete own entries" on water_entries for delete using (auth.uid() = user_id);</div></div></section>
-    <section class="card setup" id="authCard"><h2>Sign in</h2><div id="signedOut"><p>Use email login. If email confirmation is enabled in Supabase, check your inbox after signing up.</p><div class="row"><div><label>Email</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email"></div><div><label>Password</label><input id="password" type="password" placeholder="Minimum 6 characters" autocomplete="current-password"></div></div><div class="actions" style="margin-top:12px"><button id="signInBtn">Sign in</button><button class="secondary" id="signUpBtn">Create account</button><span id="authStatus" class="status"></span></div></div><div id="signedIn" class="hidden"><p>Signed in as <strong id="userEmail"></strong> <span id="rolePill" class="pill"></span></p><div class="actions"><button class="secondary" id="logoutBtn">Log out</button><span class="status ok">Private data enabled</span></div></div></section>
-    <main class="grid"><section class="card"><div class="actions"><div style="flex:1;min-width:150px"><label>Date</label><input id="date" type="date"></div><div style="flex:1;min-width:150px"><label>Daily target</label><input id="target" type="number" value="2000" min="1" step="50"></div></div><div class="bigNumber"><span id="total">0</span><small style="font-size:22px;color:var(--muted);letter-spacing:0"> ml</small></div><div class="progress"><div class="bar" id="bar"></div></div><p id="summary">0% of daily target</p><div class="quick"><button data-quick="250">+250</button><button data-quick="330">+330</button><button data-quick="500">+500</button><button data-quick="750">+750</button></div></section><section class="card"><h2>Add drink</h2><div class="row"><div><label>Amount ml</label><input id="amount" type="number" min="1" step="10" value="250"></div><div><label>Time</label><input id="time" type="time"></div></div><div style="margin-top:10px"><label>Type</label><select id="type"><option>water</option><option>sparkling water</option><option>tea</option><option>coffee</option><option>other</option></select></div><div style="margin-top:10px"><label>Note</label><textarea id="note" rows="2" placeholder="Optional"></textarea></div><div class="actions" style="margin-top:12px"><button id="addBtn">Save to cloud</button><span id="saveStatus" class="status"></span></div></section></main>
+create policy if not exists "Users can read own deletion request"
+on account_deletion_requests for select
+using (auth.uid() = user_id);</div>
+    </div>
+  </section>
+
+  <section class="card" id="authCard">
+    <h2>Sign in</h2>
+    <p>Use email login to sync your water diary securely.</p>
+    <div class="row">
+      <div><label>Email</label><input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com"></div>
+      <div><label>Password</label><input id="authPassword" type="password" autocomplete="current-password" placeholder="Password"></div>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button id="signInBtn">Sign in</button>
+      <button id="signUpBtn" class="secondary">Create account</button>
+      <span id="authStatus" class="status"></span>
+    </div>
+  </section>
+
+  <main id="diaryPage" class="hidden">
+    <div class="grid">
+      <section class="card">
+        <div class="actions">
+          <div style="flex:1;min-width:150px"><label>Date</label><input id="date" type="date"></div>
+          <div style="flex:1;min-width:150px"><label>Daily target</label><input id="target" type="number" value="2000" min="1" step="50"></div>
+        </div>
+        <div class="bigNumber"><span id="total">0</span><small style="font-size:22px;color:var(--muted);letter-spacing:0"> ml</small></div>
+        <div class="progress"><div class="bar" id="bar"></div></div>
+        <p id="summary">0% of daily target</p>
+        <div class="quick"><button data-quick="250">+250</button><button data-quick="330">+330</button><button data-quick="500">+500</button><button data-quick="750">+750</button></div>
+      </section>
+      <section class="card">
+        <h2>Add drink</h2>
+        <div class="row"><div><label>Amount ml</label><input id="amount" type="number" min="1" step="10" value="250"></div><div><label>Time</label><input id="time" type="time"></div></div>
+        <div style="margin-top:10px"><label>Type</label><select id="type"><option>water</option><option>sparkling water</option><option>tea</option><option>coffee</option><option>other</option></select></div>
+        <div style="margin-top:10px"><label>Note</label><textarea id="note" rows="2" placeholder="Optional"></textarea></div>
+        <div class="actions" style="margin-top:12px"><button id="addBtn">Save</button><span id="saveStatus" class="status"></span></div>
+      </section>
+    </div>
     <section class="card" style="margin-top:16px"><div class="actions"><h2 style="margin-right:auto">Entries</h2><button class="secondary" id="refreshBtn">Refresh</button></div><div id="entries"></div></section>
-  </div>
+  </main>
+
+  <section id="profilePage" class="card hidden">
+    <h2>Profile</h2>
+    <p>Manage your account information.</p>
+    <div class="row">
+      <div><label>Email</label><input id="profileEmail" type="email"></div>
+      <div><label>Display name</label><input id="displayName" placeholder="Your name"></div>
+    </div>
+    <p class="hint">Changing email may require confirmation depending on your Supabase Auth settings.</p>
+    <div class="actions" style="margin-top:12px"><button id="saveProfileBtn">Save profile</button><span id="profileStatus" class="status"></span></div>
+
+    <section class="card dangerZone" style="margin-top:18px;box-shadow:none">
+      <h2>Delete account</h2>
+      <p><strong>Important:</strong> a browser app cannot fully delete the Supabase Auth user by itself. Supabase user deletion requires a secure server-side admin action, such as an Edge Function using the service role key.</p>
+      <div class="notice">This app can delete your diary entries and profile data immediately. Full login-account deletion needs an admin/Edge Function step.</div>
+      <label>Type DELETE to confirm data deletion</label>
+      <input id="deleteConfirm" placeholder="DELETE">
+      <div class="actions" style="margin-top:12px">
+        <button id="deleteMyDataBtn" class="danger">Delete my diary data + profile</button>
+        <button id="requestDeletionBtn" class="warn">Request full account deletion</button>
+        <span id="deleteStatus" class="status"></span>
+      </div>
+    </section>
+  </section>
+</div>
+
 <script>
-const APP_CONFIG={
-  // Optional: paste your Supabase project values here before uploading to GitHub Pages.
-  // The publishable/anon key is safe to use in a frontend when Row Level Security is enabled.
-  SUPABASE_URL:'',
-  SUPABASE_ANON_KEY:''
+// CONFIG: paste your values here before publishing to real users.
+// Keeping these as publishable values in frontend is normal with Supabase RLS.
+const CONFIG = {
+  SUPABASE_URL: '',
+  SUPABASE_PUBLISHABLE_KEY: ''
 };
-const els={openSettings:document.getElementById('openSettings'),closeSettings:document.getElementById('closeSettings'),setupCard:document.getElementById('setupCard'),sbUrl:document.getElementById('sbUrl'),sbKey:document.getElementById('sbKey'),saveConfig:document.getElementById('saveConfig'),configStatus:document.getElementById('configStatus'),cloudState:document.getElementById('cloudState'),toggleSql:document.getElementById('toggleSql'),sqlBox:document.getElementById('sqlBox'),signedOut:document.getElementById('signedOut'),signedIn:document.getElementById('signedIn'),email:document.getElementById('email'),password:document.getElementById('password'),signInBtn:document.getElementById('signInBtn'),signUpBtn:document.getElementById('signUpBtn'),logoutBtn:document.getElementById('logoutBtn'),rolePill:document.getElementById('rolePill'),authStatus:document.getElementById('authStatus'),userEmail:document.getElementById('userEmail'),date:document.getElementById('date'),target:document.getElementById('target'),total:document.getElementById('total'),bar:document.getElementById('bar'),summary:document.getElementById('summary'),amount:document.getElementById('amount'),time:document.getElementById('time'),type:document.getElementById('type'),note:document.getElementById('note'),addBtn:document.getElementById('addBtn'),saveStatus:document.getElementById('saveStatus'),entries:document.getElementById('entries'),refreshBtn:document.getElementById('refreshBtn')};
-let supabaseClient=null,currentUser=null,currentProfile=null,entries=[];
-function today(){return new Date().toISOString().slice(0,10)} function nowTime(){return new Date().toTimeString().slice(0,5)} function setStatus(m,ok=false){els.saveStatus.textContent=m;els.saveStatus.style.color=ok?'var(--ok)':'var(--muted)'} function setAuthStatus(m,ok=false){els.authStatus.textContent=m;els.authStatus.style.color=ok?'var(--ok)':'var(--muted)'} function connected(){return !!supabaseClient} function signedIn(){return !!currentUser}
-function isAdmin(){return currentProfile?.role === 'admin'}
-function updateAdminUI(){if(isAdmin()) els.openSettings.classList.remove('hidden'); else {els.openSettings.classList.add('hidden'); els.setupCard.classList.add('hidden')}}
-async function loadProfile(){currentProfile=null;if(!connected()||!currentUser)return null;const {data,error}=await supabaseClient.from('profiles').select('id,email,role').eq('id',currentUser.id).maybeSingle();if(error){console.warn('Profile load failed:',error.message);return null}currentProfile=data||null;return currentProfile}
-function setCloudState(text,state){els.cloudState.textContent=text;if(state==='ok'){els.cloudState.style.background='#dcfce7';els.cloudState.style.color='#047857'}else if(state==='warn'){els.cloudState.style.background='#fef3c7';els.cloudState.style.color='#92400e'}else{els.cloudState.style.background='#f1f5f9';els.cloudState.style.color='#475569'}}
-async function initClient(){const url=(APP_CONFIG.SUPABASE_URL||localStorage.getItem('waterDiary.supabaseUrl')||'').trim();const key=(APP_CONFIG.SUPABASE_ANON_KEY||localStorage.getItem('waterDiary.supabaseKey')||'').trim();els.sbUrl.value=url;els.sbKey.value=key;if(url&&key&&window.supabase){supabaseClient=window.supabase.createClient(url,key);setCloudState('Connected','warn');supabaseClient.auth.onAuthStateChange(async (_event,session)=>{currentUser=session?.user||null;await loadProfile();updateAuthUI();loadEntries()});const {data}=await supabaseClient.auth.getSession();currentUser=data?.session?.user||null;await loadProfile();updateAuthUI()}else{setCloudState('Not configured','warn');updateAuthUI()}}
-function updateAuthUI(){updateAdminUI();if(!connected()){els.signedOut.classList.remove('hidden');els.signedIn.classList.add('hidden');setAuthStatus('App is not configured yet.');setCloudState('Not configured','neutral');entries=[];render();return}if(currentUser){els.signedOut.classList.add('hidden');els.signedIn.classList.remove('hidden');els.userEmail.textContent=currentUser.email||currentUser.id;if(els.rolePill)els.rolePill.textContent=currentProfile?.role||'user';setCloudState('Signed in','ok')}else{els.signedOut.classList.remove('hidden');els.signedIn.classList.add('hidden');setCloudState('Connected, sign in','warn');entries=[];render()}updateAdminUI()}
-async function loadEntries(){if(!connected()){setStatus('App is not configured yet.');render();return}if(!signedIn()){setStatus('Sign in to load your private entries.');render();return}setStatus('Loading...');const {data,error}=await supabaseClient.from('water_entries').select('*').eq('entry_date',els.date.value).order('entry_time',{ascending:false});if(error){setStatus(error.message);return}entries=data||[];setStatus('Synced',true);render()}
-async function addEntry(amount,type='water',note=''){if(!connected()){setStatus('App is not configured yet.');return}if(!signedIn()){setStatus('Sign in first.');return}const row={user_id:currentUser.id,entry_date:els.date.value,entry_time:els.time.value||nowTime(),amount_ml:Number(amount),drink_type:type,note};if(!row.amount_ml||row.amount_ml<=0){setStatus('Enter amount.');return}els.addBtn.disabled=true;setStatus('Saving...');const {error}=await supabaseClient.from('water_entries').insert(row);els.addBtn.disabled=false;if(error){setStatus(error.message);return}els.note.value='';els.amount.value=250;els.time.value=nowTime();await loadEntries()}
-async function deleteEntry(id){if(!connected()||!signedIn())return;const {error}=await supabaseClient.from('water_entries').delete().eq('id',id);if(error){setStatus(error.message);return}await loadEntries()}
-async function upsertOwnProfile(user){if(!connected()||!user)return;await supabaseClient.from('profiles').upsert({id:user.id,email:user.email,role:'user'},{onConflict:'id'})}
-async function signUp(){if(!connected()){setAuthStatus('App is not configured yet.');return}const email=els.email.value.trim(),password=els.password.value;if(!email||!password){setAuthStatus('Enter email and password.');return}els.signUpBtn.disabled=true;setAuthStatus('Creating account...');const {data,error}=await supabaseClient.auth.signUp({email,password});els.signUpBtn.disabled=false;if(error){setAuthStatus(error.message);return}if(data.user){await upsertOwnProfile(data.user)}if(data.session){currentUser=data.user;await loadProfile();updateAuthUI();await loadEntries();setAuthStatus('Account created and signed in.',true)}else{setAuthStatus('Account created. Check your email to confirm login.',true)}}
-async function signIn(){if(!connected()){setAuthStatus('App is not configured yet.');return}const email=els.email.value.trim(),password=els.password.value;if(!email||!password){setAuthStatus('Enter email and password.');return}els.signInBtn.disabled=true;setAuthStatus('Signing in...');const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});els.signInBtn.disabled=false;if(error){setAuthStatus(error.message);return}currentUser=data.user;await loadProfile();updateAuthUI();await loadEntries();setAuthStatus('',true)}
-async function logout(){if(!connected())return;await supabaseClient.auth.signOut();currentUser=null;currentProfile=null;entries=[];updateAuthUI();render()}
-function render(){const total=entries.reduce((sum,e)=>sum+Number(e.amount_ml||0),0),target=Number(els.target.value||2000),pct=target?Math.min(100,Math.round(total/target*100)):0;els.total.textContent=total;els.bar.style.width=pct+'%';els.summary.textContent=`${pct}% of ${target} ml daily target`;if(!connected()){els.entries.innerHTML='<p>App is not configured yet.</p>';return}if(!signedIn()){els.entries.innerHTML='<p>Sign in to see your private entries.</p>';return}if(!entries.length){els.entries.innerHTML='<p>No entries for this date yet.</p>';return}els.entries.innerHTML=entries.map(e=>`<div class="entry"><div class="amount">${e.amount_ml} ml</div><div><strong>${escapeHtml(e.drink_type||'water')}</strong><div class="meta">${String(e.entry_time).slice(0,5)}${e.note?' · '+escapeHtml(e.note):''}</div></div><button class="danger" data-delete="${e.id}">Delete</button></div>`).join('');document.querySelectorAll('[data-delete]').forEach(btn=>btn.addEventListener('click',()=>deleteEntry(btn.dataset.delete)))}
-function escapeHtml(s){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-els.openSettings.addEventListener('click',()=>{if(isAdmin()) els.setupCard.classList.toggle('hidden')});els.closeSettings.addEventListener('click',()=>els.setupCard.classList.add('hidden'));els.saveConfig.addEventListener('click',async()=>{if(!isAdmin()){els.configStatus.textContent='Admin only.';return}localStorage.setItem('waterDiary.supabaseUrl',els.sbUrl.value.trim());localStorage.setItem('waterDiary.supabaseKey',els.sbKey.value.trim());supabaseClient=null;currentUser=null;entries=[];await initClient();els.configStatus.textContent='Saved.';await loadEntries()});els.toggleSql.addEventListener('click',()=>els.sqlBox.classList.toggle('hidden'));els.signUpBtn.addEventListener('click',signUp);els.signInBtn.addEventListener('click',signIn);els.logoutBtn.addEventListener('click',logout);els.addBtn.addEventListener('click',()=>addEntry(els.amount.value,els.type.value,els.note.value));els.refreshBtn.addEventListener('click',loadEntries);els.date.addEventListener('change',loadEntries);els.target.addEventListener('input',render);document.querySelectorAll('[data-quick]').forEach(btn=>btn.addEventListener('click',()=>addEntry(btn.dataset.quick)));
-els.date.value=today();els.time.value=nowTime();initClient().then(loadEntries);
+
+const els={sbUrl:document.getElementById('sbUrl'),sbKey:document.getElementById('sbKey'),saveConfig:document.getElementById('saveConfig'),configStatus:document.getElementById('configStatus'),cloudState:document.getElementById('cloudState'),setupCard:document.getElementById('setupCard'),toggleSql:document.getElementById('toggleSql'),sqlBox:document.getElementById('sqlBox'),authCard:document.getElementById('authCard'),authEmail:document.getElementById('authEmail'),authPassword:document.getElementById('authPassword'),signInBtn:document.getElementById('signInBtn'),signUpBtn:document.getElementById('signUpBtn'),authStatus:document.getElementById('authStatus'),logoutBtn:document.getElementById('logoutBtn'),navDiary:document.getElementById('navDiary'),navProfile:document.getElementById('navProfile'),navSettings:document.getElementById('navSettings'),diaryPage:document.getElementById('diaryPage'),profilePage:document.getElementById('profilePage'),date:document.getElementById('date'),target:document.getElementById('target'),total:document.getElementById('total'),bar:document.getElementById('bar'),summary:document.getElementById('summary'),amount:document.getElementById('amount'),time:document.getElementById('time'),type:document.getElementById('type'),note:document.getElementById('note'),addBtn:document.getElementById('addBtn'),saveStatus:document.getElementById('saveStatus'),entries:document.getElementById('entries'),refreshBtn:document.getElementById('refreshBtn'),profileEmail:document.getElementById('profileEmail'),displayName:document.getElementById('displayName'),saveProfileBtn:document.getElementById('saveProfileBtn'),profileStatus:document.getElementById('profileStatus'),deleteConfirm:document.getElementById('deleteConfirm'),deleteMyDataBtn:document.getElementById('deleteMyDataBtn'),requestDeletionBtn:document.getElementById('requestDeletionBtn'),deleteStatus:document.getElementById('deleteStatus')};
+let supabaseClient=null,session=null,user=null,profile=null,entries=[];
+function today(){return new Date().toISOString().slice(0,10)}function nowTime(){return new Date().toTimeString().slice(0,5)}function escapeHtml(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}function setText(el,msg,cls=''){el.textContent=msg;el.className=(el.className||'').replace(/\b(ok|error)\b/g,'').trim();if(cls)el.classList.add(cls)}
+function getConfig(){const url=CONFIG.SUPABASE_URL||localStorage.getItem('waterDiary.supabaseUrl')||'';const key=CONFIG.SUPABASE_PUBLISHABLE_KEY||localStorage.getItem('waterDiary.supabaseKey')||'';return{url,key}}
+function initClient(){const{url,key}=getConfig();els.sbUrl.value=url;els.sbKey.value=key;if(url&&key&&window.supabase){supabaseClient=window.supabase.createClient(url,key);els.cloudState.textContent='Connected';els.cloudState.style.background='#dcfce7';els.cloudState.style.color='#047857';return true}els.cloudState.textContent='Not configured';return false}
+async function boot(){els.date.value=today();els.time.value=nowTime();if(!initClient()){showAuthOnly();setText(els.authStatus,'Supabase is not configured. Admin must add URL/key in CONFIG.','error');return}const res=await supabaseClient.auth.getSession();session=res.data.session;user=session?.user||null;if(user)await afterLogin();else showAuthOnly();supabaseClient.auth.onAuthStateChange(async(_,newSession)=>{session=newSession;user=newSession?.user||null;if(user)await afterLogin();else showAuthOnly()})}
+function showAuthOnly(){els.authCard.classList.remove('hidden');els.diaryPage.classList.add('hidden');els.profilePage.classList.add('hidden');els.setupCard.classList.add('hidden');els.logoutBtn.classList.add('hidden');els.navDiary.classList.add('hidden');els.navProfile.classList.add('hidden');els.navSettings.classList.add('hidden');els.cloudState.textContent=supabaseClient?'Connected':'Not configured'}
+async function afterLogin(){await loadProfile();els.authCard.classList.add('hidden');els.logoutBtn.classList.remove('hidden');els.navDiary.classList.remove('hidden');els.navProfile.classList.remove('hidden');els.navSettings.classList.toggle('hidden',profile?.role!=='admin');showPage('diary');loadEntries()}
+function showPage(page){els.diaryPage.classList.toggle('hidden',page!=='diary');els.profilePage.classList.toggle('hidden',page!=='profile');els.setupCard.classList.toggle('hidden',page!=='settings'||profile?.role!=='admin');if(page==='profile')fillProfileForm()}
+async function loadProfile(){profile=null;const {data,error}=await supabaseClient.from('profiles').select('id,email,role,display_name').eq('id',user.id).single();if(error&&error.code!=='PGRST116'){console.warn(error)}if(data){profile=data;return}const fallback={id:user.id,email:user.email,role:'user',display_name:''};await supabaseClient.from('profiles').insert(fallback);profile=fallback}
+function fillProfileForm(){els.profileEmail.value=user?.email||profile?.email||'';els.displayName.value=profile?.display_name||'';setText(els.profileStatus,'')}
+async function loadEntries(){if(!user)return;setText(els.saveStatus,'Loading...');const{data,error}=await supabaseClient.from('water_entries').select('*').eq('entry_date',els.date.value).order('entry_time',{ascending:false});if(error){setText(els.saveStatus,error.message,'error');return}entries=data||[];setText(els.saveStatus,'Synced','ok');render()}
+async function addEntry(amount,type='water',note=''){if(!user){setText(els.saveStatus,'Sign in first.','error');return}const row={user_id:user.id,entry_date:els.date.value,entry_time:els.time.value||nowTime(),amount_ml:Number(amount),drink_type:type,note};if(!row.amount_ml||row.amount_ml<=0){setText(els.saveStatus,'Enter amount.','error');return}els.addBtn.disabled=true;setText(els.saveStatus,'Saving...');const{error}=await supabaseClient.from('water_entries').insert(row);els.addBtn.disabled=false;if(error){setText(els.saveStatus,error.message,'error');return}els.note.value='';els.amount.value=250;els.time.value=nowTime();await loadEntries()}
+async function deleteEntry(id){const{error}=await supabaseClient.from('water_entries').delete().eq('id',id);if(error){setText(els.saveStatus,error.message,'error');return}await loadEntries()}
+function render(){const total=entries.reduce((sum,e)=>sum+Number(e.amount_ml||0),0);const target=Number(els.target.value||2000);const pct=target?Math.min(100,Math.round(total/target*100)):0;els.total.textContent=total;els.bar.style.width=pct+'%';els.summary.textContent=`${pct}% of ${target} ml daily target`;if(!entries.length){els.entries.innerHTML='<p>No entries for this date yet.</p>';return}els.entries.innerHTML=entries.map(e=>`<div class="entry"><div class="amount">${e.amount_ml} ml</div><div><strong>${escapeHtml(e.drink_type||'water')}</strong><div class="meta">${String(e.entry_time).slice(0,5)}${e.note?' · '+escapeHtml(e.note):''}</div></div><button class="danger" data-delete="${e.id}">Delete</button></div>`).join('');document.querySelectorAll('[data-delete]').forEach(btn=>btn.addEventListener('click',()=>deleteEntry(btn.dataset.delete)))}
+async function saveProfile(){setText(els.profileStatus,'Saving...');const newEmail=els.profileEmail.value.trim();const displayName=els.displayName.value.trim();if(newEmail&&newEmail!==user.email){const{error:e1}=await supabaseClient.auth.updateUser({email:newEmail});if(e1){setText(els.profileStatus,e1.message,'error');return}}const{data,error}=await supabaseClient.from('profiles').update({display_name:displayName,email:newEmail||user.email,updated_at:new Date().toISOString()}).eq('id',user.id).select().single();if(error){setText(els.profileStatus,error.message,'error');return}profile=data;setText(els.profileStatus,'Profile saved.','ok')}
+async function deleteMyData(){if(els.deleteConfirm.value!=='DELETE'){setText(els.deleteStatus,'Type DELETE first.','error');return}els.deleteMyDataBtn.disabled=true;setText(els.deleteStatus,'Deleting data...');let error=null;({error}=await supabaseClient.from('water_entries').delete().eq('user_id',user.id));if(error){setText(els.deleteStatus,error.message,'error');els.deleteMyDataBtn.disabled=false;return}({error}=await supabaseClient.from('profiles').delete().eq('id',user.id));if(error){setText(els.deleteStatus,error.message,'error');els.deleteMyDataBtn.disabled=false;return}setText(els.deleteStatus,'Diary data and profile deleted. Full Auth account still requires admin deletion.','ok');els.deleteMyDataBtn.disabled=false;await supabaseClient.auth.signOut()}
+async function requestDeletion(){if(els.deleteConfirm.value!=='DELETE'){setText(els.deleteStatus,'Type DELETE first.','error');return}const{error}=await supabaseClient.from('account_deletion_requests').insert({user_id:user.id,email:user.email,reason:'User requested account deletion from Profile page'});if(error){setText(els.deleteStatus,error.message,'error');return}setText(els.deleteStatus,'Deletion request submitted.','ok')}
+els.signInBtn.addEventListener('click',async()=>{setText(els.authStatus,'Signing in...');const{error}=await supabaseClient.auth.signInWithPassword({email:els.authEmail.value.trim(),password:els.authPassword.value});if(error)setText(els.authStatus,error.message,'error')});
+els.signUpBtn.addEventListener('click',async()=>{setText(els.authStatus,'Creating account...');const{data,error}=await supabaseClient.auth.signUp({email:els.authEmail.value.trim(),password:els.authPassword.value});if(error){setText(els.authStatus,error.message,'error');return}setText(els.authStatus,data.session?'Account created.':'Check your email to confirm account.','ok')});
+els.logoutBtn.addEventListener('click',()=>supabaseClient.auth.signOut());els.navDiary.addEventListener('click',()=>showPage('diary'));els.navProfile.addEventListener('click',()=>showPage('profile'));els.navSettings.addEventListener('click',()=>showPage('settings'));
+els.saveConfig.addEventListener('click',async()=>{localStorage.setItem('waterDiary.supabaseUrl',els.sbUrl.value.trim());localStorage.setItem('waterDiary.supabaseKey',els.sbKey.value.trim());initClient();setText(els.configStatus,'Saved.','ok')});els.toggleSql.addEventListener('click',()=>els.sqlBox.classList.toggle('hidden'));
+els.addBtn.addEventListener('click',()=>addEntry(els.amount.value,els.type.value,els.note.value));els.refreshBtn.addEventListener('click',loadEntries);els.date.addEventListener('change',loadEntries);els.target.addEventListener('input',render);document.querySelectorAll('[data-quick]').forEach(btn=>btn.addEventListener('click',()=>addEntry(btn.dataset.quick)));
+els.saveProfileBtn.addEventListener('click',saveProfile);els.deleteMyDataBtn.addEventListener('click',deleteMyData);els.requestDeletionBtn.addEventListener('click',requestDeletion);
+boot();
 </script>
 </body>
 </html>
