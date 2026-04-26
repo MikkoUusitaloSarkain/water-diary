@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Water Diary — Supabase</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #f4f8fb;
+      --card: #ffffff;
+      --text: #102033;
+      --muted: #65758b;
+      --line: #dbe6ef;
+      --primary: #0ea5e9;
+      --primary-dark: #0284c7;
+      --danger: #ef4444;
+      --ok: #10b981;
+      --shadow: 0 16px 40px rgba(15, 23, 42, .08);
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #e0f2fe, var(--bg) 46%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 28px 16px 52px; }
+    header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+    h1 { margin: 0 0 6px; font-size: clamp(28px, 5vw, 46px); letter-spacing: -0.04em; }
+    p { color: var(--muted); line-height: 1.5; }
+    .card {
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(219,230,239,.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 820px) { .grid { grid-template-columns: 1.1fr .9fr; } }
+    label { display: block; color: var(--muted); font-size: 13px; margin-bottom: 7px; }
+    input, select, textarea {
+      width: 100%; border: 1px solid var(--line); background: #fff; border-radius: 14px;
+      padding: 12px 13px; font: inherit; color: var(--text); outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(14,165,233,.12); }
+    .row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    button {
+      border: 0; border-radius: 999px; padding: 12px 16px; font-weight: 750; cursor: pointer;
+      color: #fff; background: var(--primary); box-shadow: 0 10px 24px rgba(14,165,233,.25);
+    }
+    button:hover { background: var(--primary-dark); }
+    button.secondary { background: #e8f3fb; color: var(--primary-dark); box-shadow: none; }
+    button.ghost { background: transparent; color: var(--muted); box-shadow: none; padding: 8px 10px; }
+    button.danger { background: #fee2e2; color: var(--danger); box-shadow: none; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .status { font-size: 13px; color: var(--muted); margin-left: auto; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 11px; background: #ecfeff; color: #0369a1; border-radius: 999px; font-weight: 700; font-size: 13px; }
+    .hidden { display: none !important; }
+    .bigNumber { font-size: clamp(46px, 10vw, 82px); line-height: .9; letter-spacing: -0.07em; margin: 12px 0 4px; }
+    .progress { height: 16px; border-radius: 999px; background: #e5eef7; overflow: hidden; margin: 18px 0 8px; }
+    .bar { height: 100%; width: 0%; background: linear-gradient(90deg, #38bdf8, #0ea5e9); transition: width .25s; }
+    .quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin-top: 14px; }
+    .quick button { padding: 13px 8px; }
+    .entry { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+    .entry:last-child { border-bottom: 0; }
+    .amount { font-weight: 850; font-size: 18px; }
+    .meta { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .setup { margin-bottom: 16px; }
+    .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
+    code { background: #e8f3fb; padding: 2px 6px; border-radius: 8px; }
+    .sql { white-space: pre-wrap; background: #0f172a; color: #e2e8f0; padding: 14px; border-radius: 16px; overflow:auto; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Water Diary</h1>
+        <p>Cloud-synced one-page hydration diary using Supabase.</p>
+      </div>
+      <span id="cloudState" class="pill">Not connected</span>
+    </header>
+
+    <section class="card setup" id="setupCard">
+      <h2>Supabase setup</h2>
+      <p>Add your Supabase project URL and public anon key. They are saved only in this browser.</p>
+      <div class="row">
+        <div><label>Supabase URL</label><input id="sbUrl" placeholder="https://xxxxx.supabase.co"></div>
+        <div><label>Anon public key</label><input id="sbKey" placeholder="eyJhbGciOi..." type="password"></div>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button id="saveConfig">Connect</button>
+        <button class="secondary" id="toggleSql">Show SQL table</button>
+        <span class="status" id="configStatus"></span>
+      </div>
+      <div id="sqlBox" class="hidden" style="margin-top:14px">
+        <p>Create this table in Supabase SQL Editor first:</p>
+        <div class="sql">create table if not exists water_entries (
+  id uuid primary key default gen_random_uuid(),
+  entry_date date not null,
+  entry_time time not null,
+  amount_ml integer not null check (amount_ml > 0),
+  drink_type text not null default 'water',
+  note text,
+  created_at timestamptz not null default now()
+);
+
+alter table water_entries enable row level security;
+
+-- Personal/simple setup: allow public anon access to this table.
+-- For a private multi-device app, add Supabase Auth and user_id policies instead.
+create policy "Allow anon read" on water_entries for select using (true);
+create policy "Allow anon insert" on water_entries for insert with check (true);
+create policy "Allow anon delete" on water_entries for delete using (true);</div>
+        <p class="hint">Note: the above anon policy is simple but not private. For a private app, use Supabase Auth before sharing the URL publicly.</p>
+      </div>
+    </section>
+
+    <main class="grid">
+      <section class="card">
+        <div class="actions">
+          <div style="flex:1; min-width:150px"><label>Date</label><input id="date" type="date"></div>
+          <div style="flex:1; min-width:150px"><label>Daily target</label><input id="target" type="number" value="2000" min="1" step="50"></div>
+        </div>
+        <div class="bigNumber"><span id="total">0</span><small style="font-size:22px;color:var(--muted);letter-spacing:0"> ml</small></div>
+        <div class="progress"><div class="bar" id="bar"></div></div>
+        <p id="summary">0% of daily target</p>
+
+        <div class="quick">
+          <button data-quick="250">+250</button>
+          <button data-quick="330">+330</button>
+          <button data-quick="500">+500</button>
+          <button data-quick="750">+750</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Add drink</h2>
+        <div class="row">
+          <div><label>Amount ml</label><input id="amount" type="number" min="1" step="10" value="250"></div>
+          <div><label>Time</label><input id="time" type="time"></div>
+        </div>
+        <div style="margin-top:10px"><label>Type</label><select id="type"><option>water</option><option>sparkling water</option><option>tea</option><option>coffee</option><option>other</option></select></div>
+        <div style="margin-top:10px"><label>Note</label><textarea id="note" rows="2" placeholder="Optional"></textarea></div>
+        <div class="actions" style="margin-top:12px"><button id="addBtn">Save to cloud</button><span id="saveStatus" class="status"></span></div>
+      </section>
+    </main>
+
+    <section class="card" style="margin-top:16px">
+      <div class="actions"><h2 style="margin-right:auto">Entries</h2><button class="secondary" id="refreshBtn">Refresh</button></div>
+      <div id="entries"></div>
+    </section>
+  </div>
+
+<script>
+const els = {
+  sbUrl: document.getElementById('sbUrl'), sbKey: document.getElementById('sbKey'), saveConfig: document.getElementById('saveConfig'),
+  configStatus: document.getElementById('configStatus'), cloudState: document.getElementById('cloudState'), setupCard: document.getElementById('setupCard'),
+  toggleSql: document.getElementById('toggleSql'), sqlBox: document.getElementById('sqlBox'), date: document.getElementById('date'), target: document.getElementById('target'),
+  total: document.getElementById('total'), bar: document.getElementById('bar'), summary: document.getElementById('summary'), amount: document.getElementById('amount'),
+  time: document.getElementById('time'), type: document.getElementById('type'), note: document.getElementById('note'), addBtn: document.getElementById('addBtn'),
+  saveStatus: document.getElementById('saveStatus'), entries: document.getElementById('entries'), refreshBtn: document.getElementById('refreshBtn')
+};
+let supabaseClient = null;
+let entries = [];
+
+function today() { return new Date().toISOString().slice(0,10); }
+function nowTime() { return new Date().toTimeString().slice(0,5); }
+function setStatus(msg, ok=false) { els.saveStatus.textContent = msg; els.saveStatus.style.color = ok ? 'var(--ok)' : 'var(--muted)'; }
+function connected() { return !!supabaseClient; }
+
+function initClient() {
+  const url = localStorage.getItem('waterDiary.supabaseUrl') || '';
+  const key = localStorage.getItem('waterDiary.supabaseKey') || '';
+  els.sbUrl.value = url; els.sbKey.value = key;
+  if (url && key && window.supabase) {
+    supabaseClient = window.supabase.createClient(url, key);
+    els.cloudState.textContent = 'Connected';
+    els.cloudState.style.background = '#dcfce7';
+    els.cloudState.style.color = '#047857';
+  }
+}
+
+async function loadEntries() {
+  if (!connected()) { render(); return; }
+  setStatus('Loading...');
+  const { data, error } = await supabaseClient
+    .from('water_entries')
+    .select('*')
+    .eq('entry_date', els.date.value)
+    .order('entry_time', { ascending: false });
+  if (error) { setStatus(error.message); return; }
+  entries = data || [];
+  setStatus('Synced', true);
+  render();
+}
+
+async function addEntry(amount, type='water', note='') {
+  if (!connected()) { setStatus('Connect Supabase first.'); return; }
+  const row = { entry_date: els.date.value, entry_time: els.time.value || nowTime(), amount_ml: Number(amount), drink_type: type, note };
+  if (!row.amount_ml || row.amount_ml <= 0) { setStatus('Enter amount.'); return; }
+  els.addBtn.disabled = true; setStatus('Saving...');
+  const { error } = await supabaseClient.from('water_entries').insert(row);
+  els.addBtn.disabled = false;
+  if (error) { setStatus(error.message); return; }
+  els.note.value = ''; els.amount.value = 250; els.time.value = nowTime();
+  await loadEntries();
+}
+
+async function deleteEntry(id) {
+  if (!connected()) return;
+  const { error } = await supabaseClient.from('water_entries').delete().eq('id', id);
+  if (error) { setStatus(error.message); return; }
+  await loadEntries();
+}
+
+function render() {
+  const total = entries.reduce((sum, e) => sum + Number(e.amount_ml || 0), 0);
+  const target = Number(els.target.value || 2000);
+  const pct = target ? Math.min(100, Math.round(total / target * 100)) : 0;
+  els.total.textContent = total;
+  els.bar.style.width = pct + '%';
+  els.summary.textContent = `${pct}% of ${target} ml daily target`;
+  if (!entries.length) {
+    els.entries.innerHTML = '<p>No entries for this date yet.</p>';
+    return;
+  }
+  els.entries.innerHTML = entries.map(e => `
+    <div class="entry">
+      <div class="amount">${e.amount_ml} ml</div>
+      <div><strong>${escapeHtml(e.drink_type || 'water')}</strong><div class="meta">${String(e.entry_time).slice(0,5)}${e.note ? ' · ' + escapeHtml(e.note) : ''}</div></div>
+      <button class="danger" data-delete="${e.id}">Delete</button>
+    </div>`).join('');
+  document.querySelectorAll('[data-delete]').forEach(btn => btn.addEventListener('click', () => deleteEntry(btn.dataset.delete)));
+}
+function escapeHtml(s) { return String(s).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+
+els.saveConfig.addEventListener('click', async () => {
+  localStorage.setItem('waterDiary.supabaseUrl', els.sbUrl.value.trim());
+  localStorage.setItem('waterDiary.supabaseKey', els.sbKey.value.trim());
+  initClient(); els.configStatus.textContent = 'Saved.'; await loadEntries();
+});
+els.toggleSql.addEventListener('click', () => els.sqlBox.classList.toggle('hidden'));
+els.addBtn.addEventListener('click', () => addEntry(els.amount.value, els.type.value, els.note.value));
+els.refreshBtn.addEventListener('click', loadEntries);
+els.date.addEventListener('change', loadEntries);
+els.target.addEventListener('input', render);
+document.querySelectorAll('[data-quick]').forEach(btn => btn.addEventListener('click', () => addEntry(btn.dataset.quick)));
+
+els.date.value = today(); els.time.value = nowTime(); initClient(); loadEntries();
+</script>
+</body>
+</html>
